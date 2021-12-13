@@ -297,3 +297,44 @@ java_binary(
         ":JsonSanitizerDenylistFuzzer_target_deploy.jar",
     ],
 )
+
+java_fuzz_target_test(
+    name = "SerializationFuzzer",
+    srcs = [
+        "src/main/java/com/example/SerializationFuzzer.java",
+        "src/main/java/com/example/RuntimeHook.java",
+        "src/main/java/com/example/TemplatesImplHook.java",
+    ],
+    # Comment out the next line to keep the fuzzer running indefinitely.
+    hook_classes = ["com.example.RuntimeHook", "com.example.TemplatesImplHook"],
+    target_class = "com.example.SerializationFuzzer",
+    deps = [
+        "@maven//:commons_beanutils_commons_beanutils",
+        "@maven//:commons_collections_commons_collections",
+        "@maven//:commons_logging_commons_logging",
+        "@maven//:rome_rome",
+        "@maven//:org_codehaus_groovy_groovy",
+    ],
+)
+
+java_fuzz_target_test(
+    name = "BuilderFuzzer",
+    srcs = [
+        "src/main/java/com/example/BuilderFuzzer.java",
+        "src/main/java/com/example/Builder.java",
+        "src/main/java/com/example/AutofuzzCodegenVisitor.java",
+        "src/main/java/com/example/AutofuzzError.java",
+        "src/main/java/com/example/YourAverageJavaClass.java",
+        "src/main/java/com/example/Meta.java",
+        "src/main/java/com/example/Student.java",
+    ],
+    # Comment out the next line to keep the fuzzer running indefinitely.
+    target_class = "com.example.BuilderFuzzer",
+    deps = [
+        "//agent/src/main/java/com/code_intelligence/jazzer/api",
+        "//agent/src/main/java/com/code_intelligence/jazzer/utils",
+        "//agent/src/main/java/com/code_intelligence/jazzer/autofuzz",
+        "@com_github_classgraph_classgraph//:classgraph",
+        "@com_github_jhalterman_typetools//:typetools",
+    ],
+)
